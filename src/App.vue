@@ -7,10 +7,13 @@ import AppFooter from "@/components/layout/AppFooter.vue";
 
 <template>
   <AppHeader />
-  <RouterView />
+  <RouterView class="app__content" />
   <AppFooter />
 </template>
 
 <style lang="scss">
-
+.app__content {
+  display: flex;
+  flex-grow: 1;
+}
 </style>

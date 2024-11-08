@@ -4,6 +4,11 @@
   font-family: "Montserrat", serif;
 }
 
-html, body {
+html, body, #app {
   height: 100vh;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
 }
