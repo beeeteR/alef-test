@@ -1,11 +1,9 @@
-.--p2 {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-}
-
-.--p3 {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 15.85px;
+.--btn-secondary {
+  background-color: unset;
+  color: map-get($colors, 'primary');
+  border: 2px solid map-get($colors, 'primary');
+  background-image: url("@/assets/icons/Union.svg");
+  background-repeat: no-repeat;
+  background-position: 20px center;
+  padding: 10px 20px 10px 44px;
 }

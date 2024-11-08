@@ -7,8 +7,8 @@
       <img src="@/assets/image/logo.png" alt="logo" class="app__logo">
     </router-link>
     <nav class="header__nav">
-      <router-link to="/" class="header__nav-item --p2">Форма</router-link>
-      <router-link to="/info" class="header__nav-item --p2">Превью</router-link>
+      <router-link to="/" class="header__nav-item">Форма</router-link>
+      <router-link to="/info" class="header__nav-item">Превью</router-link>
     </nav>
   </header>
 </template>
@@ -28,7 +28,8 @@
     transform: translate(-50%);
 
     &-item {
-      color: map-get($colors, 'grey')
+      @include p2;
+      color: map-get($colors, 'gray');
     }
   }
 }

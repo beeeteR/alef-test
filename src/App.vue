@@ -14,6 +14,11 @@ import AppFooter from "@/components/layout/AppFooter.vue";
 <style lang="scss">
 .app__content {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
   flex-grow: 1;
+  margin-top: 30px;
+  width: 616px;
 }
 </style>

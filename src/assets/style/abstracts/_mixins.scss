@@ -1,0 +1,17 @@
+@mixin p2 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+@mixin p3 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 15.85px;
+}
+
+@mixin p2-medium {
+  @include p2;
+  font-size: 16px;
+  font-weight: 500;
+}

@@ -14,6 +14,7 @@
   padding: 30px 0;
   margin-top: auto;
   p {
+    @include p3;
     color: #000000;
   }
 }
