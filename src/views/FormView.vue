@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import {useRouter} from "vue-router";
+import {reactive} from "vue";
+import {useAppStore} from "@/stores/appStore";
 import UiInput from "@/components/ui/UiInput.vue";
 import ChildData from "@/components/pages/ChildData.vue";
-import {reactive} from "vue";
 import type {IChild} from "@/utils/types/child";
-import {useAppStore} from "@/stores/appStore";
 import type {IUser} from "@/utils/types/user";
-import {useRouter} from "vue-router";
+import type {IWarningsUserAndChildren} from "@/utils/types/common";
+import {checkWarning} from "@/utils/common";
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -15,11 +17,19 @@ const userInfo = reactive<IUser>({
   name: '',
   age: 0
 })
+const warnings = reactive<IWarningsUserAndChildren>({
+  user: {
+    name: '',
+    age: ''
+  },
+  children: []
+})
 
 function addChild() {
   if (children.length < 5) {
+    const thisChildId = Date.now()
     children.push({
-      id: Date.now(),
+      id: thisChildId,
       parentId: userInfo.id,
       name: '',
       age: 0
@@ -36,12 +46,45 @@ function removeChild(id: number) {
   children.splice(children.findIndex(child => child.id === id), 1)
 }
 
-function updateUserInfo(value: string | number) {
-  if (typeof value === 'number') {
-    userInfo.age = value
+function updateUserInfo(valueInput: string | number) {
+  if (typeof valueInput === 'number') {
+    userInfo.age = valueInput
   } else {
-    userInfo.name = value
+    userInfo.name = valueInput
   }
+}
+
+function getWarningForChildById(childId: number) {
+  const foundedChild = warnings.children.find(item => item.id === childId)
+  if (foundedChild) return foundedChild
+  return warnings.children[0]
+}
+
+function validation() {
+  warnings.user.name = checkWarning(userInfo.name)
+  warnings.user.age = checkWarning(userInfo.age)
+
+  warnings.children.length = 0
+
+  children.forEach(child => {
+    warnings.children.push({
+      id: child.id,
+      name: checkWarning(child.name),
+      age: checkWarning(child.age)
+    })
+  })
+
+  let validationPassed = false
+  if (typeof warnings.user.age !== 'string' && typeof warnings.user.name !== "string") {
+    if (warnings.children.length) {
+      warnings.children.forEach(childWarning => {
+        if (typeof childWarning.age !== 'string' && typeof childWarning.name !== "string") {
+          validationPassed = true
+        }
+      })
+    } else validationPassed = true
+  }
+  if (validationPassed) saveData()
 }
 
 function saveData() {
@@ -56,8 +99,8 @@ function saveData() {
   <div class="page__form">
     <section class="personal__data">
       <h2 class="section-title">Персональные данные</h2>
-      <UiInput title="Имя" type="text" @updateValue="updateUserInfo"/>
-      <UiInput title="Возраст" type="number" @updateValue="updateUserInfo"/>
+      <UiInput title="Имя" type="text" :warning="warnings.user.name" @updateValue="updateUserInfo"/>
+      <UiInput title="Возраст" type="number" :warning="warnings.user.age" @updateValue="updateUserInfo"/>
     </section>
     <section class="children-section" :class="{'--children-section__active': children.length > 0}">
       <div class="children-section__header">
@@ -66,12 +109,13 @@ function saveData() {
       </div>
       <div class="children-section__body">
         <div class="children-data">
-          <ChildData v-for="child in children" :key="child.id" :child="child" @updateChild="updateChildrenInfo"
+          <ChildData v-for="child in children" :key="child.id" :child="child"
+                     :warning="getWarningForChildById(child.id)" @updateChild="updateChildrenInfo"
                      @deleteChild="removeChild"/>
         </div>
       </div>
     </section>
-    <button class="btn-primary" @click="saveData">Сохранить</button>
+    <button class="btn-primary" @click="validation">Сохранить</button>
   </div>
 </template>
 
@@ -128,10 +172,14 @@ function saveData() {
     .children-section__body {
       display: block;
     }
+
+    & ~ .btn-primary {
+      align-self: flex-start;
+    }
   }
 
   .btn-primary {
-    align-self: flex-start;
+    align-self: unset;
     margin-top: 30px;
   }
 }
