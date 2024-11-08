@@ -20,6 +20,10 @@ export const useAppStore = defineStore('appStore', {
     },
     removeChild(childId: number) {
       this.children = this.children.filter(child => child.id !== childId)
+    },
+    resetStore() {
+      this.user = {} as IUser
+      this.children.length = 0
     }
   },
 })

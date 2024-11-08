@@ -16,48 +16,63 @@ type IEmitsUiInput = {
 const props = defineProps<IPropsUiInput>()
 const inputValue = ref<TInputValue>('')
 const emits = defineEmits<IEmitsUiInput>()
-
+const inputInFocus = ref(false)
 
 function updateInputValue() {
   emits('updateValue', inputValue.value)
 }
 
+function changeStateFocucedInput() {
+  inputInFocus.value = !inputInFocus.value
+}
+
 </script>
 
 <template>
-  <div class="ui-input__wrapper" :class="{'--ui-input-warning': warning}">
-    <label class="ui-label">
-      <span class="ui-label__title">{{ title }}</span>
+  <div class="ui-input__wrapper">
+    <label class="ui-label" :class="{'--ui-input-warning': warning}">
+      <span class="ui-label__title" :class="{'ui-label__title-in-top': inputInFocus || inputValue}">{{ title }}</span>
       <input :type="type" class="ui-input" required min="1" max="100" minlength="2" maxlength="20" v-model="inputValue"
-             @change="updateInputValue">
+             @change="updateInputValue" @focusin="changeStateFocucedInput" @focusout="changeStateFocucedInput">
     </label>
-    <span v-if="typeof warning === 'string'" class="ui-label__warning">{{ warning }}</span>
+    <span v-if="typeof warning === 'string' && warning.length > 0" class="ui-label__warning">{{ warning }}</span>
   </div>
 </template>
 
 <style lang="scss">
 .ui-input__wrapper {
-  border: 1px solid map-get($colors, 'grayL');
-  border-radius: 4px;
-
   .ui-label {
     display: block;
     position: relative;
+    border: 1px solid map-get($colors, 'grayL');
+    border-radius: 4px;
+    transition: all 300ms;
 
-    &__title {
-      @include p3;
-      position: absolute;
-      top: 8px;
-      left: 16px;
-      color: map-get($colors, 'gray');
+    &:hover {
+      box-shadow: 0 4px 56px 0 #33333329, 0 4px 4px 0 #3333330A;
     }
 
+    &__title {
+      @include p2;
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      color: map-get($colors, 'another-gray');
+      transition: all 300ms;
+
+      &-in-top {
+        @include p3;
+        color: map-get($colors, 'gray');
+        top: 8px;
+      }
+    }
+
+
     &__warning {
-      @include p3;
+      @include p2;
       display: block;
       color: map-get($colors, 'red');
-      padding-left: 16px;
-      padding-bottom: 10px;
+      margin-top: 7px;
     }
   }
 
@@ -75,6 +90,6 @@ function updateInputValue() {
 }
 
 .--ui-input-warning {
-  border: 1px solid map-get($colors, 'redGirl');
+  background-color: map-get($colors, 'red-girl');
 }
 </style>

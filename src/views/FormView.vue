@@ -75,21 +75,20 @@ function validation() {
   })
 
   let validationPassed = false
-  if (typeof warnings.user.age !== 'string' && typeof warnings.user.name !== "string") {
+  if (!warnings.user.age && !warnings.user.name) {
     if (warnings.children.length) {
-      warnings.children.forEach(childWarning => {
-        if (typeof childWarning.age !== 'string' && typeof childWarning.name !== "string") {
-          validationPassed = true
-        }
-      })
+      validationPassed = warnings.children.every(childWarning => !childWarning.age && !childWarning.name)
     } else validationPassed = true
   }
   if (validationPassed) saveData()
 }
 
 function saveData() {
+  appStore.resetStore()
+
   appStore.setUser(userInfo)
   appStore.addChildren(children)
+
   router.push('/info')
 }
 
